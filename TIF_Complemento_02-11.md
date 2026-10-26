@@ -1,6 +1,6 @@
 # TIF — Complemento del Encuentro E2 (02/11/2026)
 
-> Esta hoja continúa la ficha del 26/10 ([TIF_Ficha_26-10.md](TIF_Ficha_26-10.md)); no es un trabajo nuevo. Las comprobaciones externas que el grupo no hizo todavía figuran como **PENDIENTE**, con el modo de hacerlas, tal como pide la guía. Si alguien del grupo consigue el dato antes del 09/11, se reemplaza por la fuente y el resultado.
+> Esta hoja continúa la ficha del 26/10 ([TIF_Ficha_26-10.md](TIF_Ficha_26-10.md)), sobre los errores en producción que se detectan tarde; no es un trabajo nuevo. Las comprobaciones que todavía no se hicieron figuran como **PENDIENTE**, con el modo de hacerlas. Cuando estén hechas, se reemplaza por la fuente y el resultado.
 
 ## Grupo / integrantes
 
@@ -8,38 +8,41 @@
 
 ## 1. Revisamos la ficha: ¿qué mejoramos del problema o de los criterios?
 
-- **Problema:** agregamos un recorte que faltaba: el TIF trata la gestión de pedidos **no urgentes**. Las urgencias con riesgo para las personas quedan fuera, porque tienen (o deben tener) su propio canal y no corresponde que un grupo de estudiantes las rediseñe.
-- **Criterio 3:** “viabilidad con los recursos actuales” mezclaba dinero y tiempo del personal. Lo dividimos en *costo inicial* y *esfuerzo de mantenerlo en el tiempo*. La A es barata, pero su punto débil es justamente el esfuerzo sostenido.
-- **Criterio 1:** dejó de ser “atender urgencias” y pasó a ser **“derivar correctamente lo urgente”**: el protocolo solo tiene que reconocer una urgencia y mandarla al canal formal.
+- **Problema:** acotamos el alcance a **errores de la aplicación**. Las caídas completas del proveedor de hosting quedan fuera, igual que en el TP1: no dependen del desarrollador y el proveedor ya las informa.
+- **Criterio 3:** “esfuerzo y costo” mezclaba dos cosas. Lo dividimos en *costo mensual* y *tiempo semanal de revisión*. Una herramienta gratis que genera cien avisos por día no es sostenible para una persona sola.
+- **Nuevo criterio:** **privacidad**. En el TP1 era una restricción, pero al elegir la A pasó a ser lo que más puede salir mal, así que la usamos también para comparar.
 
 ## 2. Una comprobación externa: ¿qué verificamos o qué falta verificar?
 
 | Qué hay que comprobar | Fuente / prueba | Resultado |
 |---|---|---|
-| Volumen de solicitudes por semana y canales actuales | Entrevista breve al responsable de mantenimiento, o su registro de pedidos | **PENDIENTE.** Lo haríamos con tres preguntas: cuántos pedidos por semana, por qué vías llegan y cómo se registran hoy. |
-| Cómo se derivan hoy los avisos de riesgo | Consulta al área responsable (mantenimiento / seguridad e higiene) | **PENDIENTE.** Es la condición excluyente: sin esta respuesta, el piloto no empieza. |
-| Prueba de la regla de prioridad | Prueba de escritorio: aplicamos la regla escrita a 10 pedidos inventados por el grupo, rotulados como ficticios, y comparamos la clasificación de dos integrantes por separado | `[completar: cuántos de los 10 clasificaron igual]`. Esta prueba la puede hacer el grupo hoy, sin depender de nadie. Si los dos no coinciden en la mayoría, la regla es ambigua y hay que reescribirla. |
+| Qué registra la captura de errores cuando ocurre una falla | **Prueba en un sistema de desarrollo:** integrar la captura, provocar a propósito un error en un formulario con datos ficticios y revisar el registro generado | `[completar]`. Hay que anotar: si quedan fecha, pantalla y mensaje (criterio 2), cuánto tarda en llegar el aviso (criterio 1) y si aparece algún dato cargado en el formulario (privacidad). |
+| Costo y límites del plan gratuito | Documentación oficial de precios del proveedor elegido, con fecha de consulta | **PENDIENTE.** Lo haríamos registrando el enlace, la fecha y los límites (eventos por mes, días de retención). |
+| Cantidad y tipo de fallas reales | Tabla de reclamos anonimizados del TP1, reconstruida con mensajes y correos de los últimos meses | **PENDIENTE.** Lo haríamos contando las fallas por tipo (error visible, falla silenciosa, datos incorrectos, caída). |
 
 Volver a preguntarle a la IA no cuenta como verificación, así que no lo incluimos.
 
 ## 3. Decisión revisada: ¿qué haríamos, por qué y con qué precaución?
 
-Mantenemos la **alternativa A como piloto** acotado a pedidos no urgentes: un canal único, una regla de prioridad escrita, una planilla común y un responsable que la revisa una vez por semana.
+Mantenemos la **A como piloto en un solo sistema**, durante un mes.
 
-- **Por qué:** es la única de las tres que se puede probar sin presupuesto ni software nuevo, y genera el dato que hoy nos falta (volumen real de pedidos) para decidir si después conviene pasar a la B.
-- **Precauciones:** no empezar sin confirmar el canal de urgencias. No registrar en la planilla datos personales más allá del sector y el contacto institucional. Definir de antemano cuándo se abandona el piloto: si la planilla no se actualiza durante dos semanas, se suspende.
+- **Por qué:** es la única alternativa que captura la información en el momento de la falla. La prueba de desarrollo nos dice, antes de llevarla a producción, si realmente lo hace.
+- **Precauciones:**
+  - Configurar la captura para que **no guarde el contenido de formularios ni datos de usuarios**, y comprobarlo en la prueba antes de pasar a producción.
+  - Avisar al cliente que se registran errores técnicos.
+  - Definir una regla de corte: si los avisos llevan más de 30 minutos semanales de revisión, filtrar por gravedad antes de sumar más sistemas.
 
 ## 4. ¿Qué aportó la IA y qué decidió el grupo?
 
-- **Aportó la IA:** ordenó las tres alternativas con ventajas y límites, propuso la B tal como quedó y señaló que el “QR” era una variante, no una alternativa.
-- **Decidió el grupo:** las alternativas A y C (son previas a la consulta), los criterios, dejar fuera las urgencias, elegir la A, las precauciones y qué hay que verificar. La IA no eligió ni propuso el piloto.
+- **Aportó la IA:** la alternativa B, el límite de la C (no adelanta el aviso) y una redacción ordenada de ventajas y límites.
+- **Decidió el grupo:** el problema y su recorte (vienen del TP1), los criterios, sumar la privacidad como criterio, elegir la A como piloto, el diseño de la prueba de desarrollo y la regla de corte.
 
 ## 5. Reflexión breve: ¿qué mejoraríamos al resolver otro problema?
 
-Buscaríamos los datos reales **antes** de comparar alternativas. Comparamos “a ciegas” y la decisión quedó condicionada a un dato (el volumen) que podríamos haber pedido el primer día.
+Haríamos antes la prueba en desarrollo. Con una hora de prueba se responden dudas que en la ficha quedaron como supuestos (qué se registra, cuánto tarda). Probar barato antes de comparar en abstracto.
 
 ## Reflexión personal
 
-**Jonatan Harbertz:** `[completar en una o dos frases propias]`. Por ejemplo: lo que más me sirvió fue separar lo que la IA propuso de lo que decidimos nosotros; en la práctica, lo difícil no fue generar alternativas sino saber qué dato faltaba para elegir.
+**Jonatan Harbertz:** `[completar en una o dos frases propias]`. Por ejemplo: al ser un problema mío, me costó no saltar directo a la herramienta que ya tenía en mente; los criterios me obligaron a justificar por qué la A y no la C.
 
 `[cada integrante agrega la suya]`
